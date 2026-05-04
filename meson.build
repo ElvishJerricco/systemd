@@ -1692,7 +1692,8 @@ conf.set10('SYSTEMD_SLOW_TESTS_DEFAULT', want_slow_tests)
 #####################################################################
 
 pymod = import('python')
-python = pymod.find_installation('python3', required : true, modules : ['jinja2'])
+python_program = find_program('python3', required : true, native : true)
+python = pymod.find_installation(python_program.full_path(), required : true, modules : ['jinja2'])
 if not python.language_version().version_compare('>=3.9')
         error('Python >= 3.9 is required')
 endif
@@ -1875,7 +1876,7 @@ efi_arch = {
         'x86'         : 'ia32',
 }.get(host_machine.cpu_family(), '')
 
-pyelftools = pymod.find_installation('python3',
+pyelftools = pymod.find_installation(python_program.full_path(),
                                      required : get_option('bootloader'),
                                      modules : ['elftools'])
 
@@ -1896,7 +1897,8 @@ if have and efi_arch == 'x64' and cc.links('''
         efi_cpu_family_alt = 'x86'
 endif
 
-want_ukify = pymod.find_installation('python3', required: get_option('ukify'), modules : ['pefile']).found()
+python_ukify_program = find_program('python3', required : true)
+want_ukify = pymod.find_installation(python_ukify_program.full_path(), required: get_option('ukify'), modules : ['pefile']).found()
 conf.set10('ENABLE_UKIFY', want_ukify)
 
 #####################################################################
